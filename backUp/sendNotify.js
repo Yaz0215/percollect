@@ -201,21 +201,20 @@ async function sendNotify(
   params = {},
   author = '\n\n云函数老用户这个月开始实行新收费政策,请自行购买资源包或删除函数和github私库.',
 ) {
-  let no_notify = process.env.no_notify
-  if (no_notify) {
-    no_notify = process.env.no_notify.split('&')
-    if (module.parent.filename) {
-      const script_name = module.parent.filename.split('/').slice(-1)[0]
-      if (no_notify.some(key_word => {
-        const flag = script_name.includes(key_word)
-        if (flag) {
-          console.log(`${script_name}含有关键字${key_word},不推送`)
-        }
-        return flag
-      })) {
-        return
+  if (process.env.NOTIFY_FILTERBYFILE) {
+      var no_notify = process.env.NOTIFY_FILTERBYFILE.split('&');
+      if (module.parent.filename) {
+          const script_name = module.parent.filename.split('/').slice(-1)[0];
+          if (no_notify.some(key_word => {
+              const flag = script_name.includes(key_word);
+              if (flag) {
+                  console.log(`${script_name}含有关键字${key_word},不推送`);
+              }
+              return flag;
+          })) {
+              return;
+          }
       }
-    }
   }
   //提供6种通知
   desp += author; //增加作者信息，防止被贩卖等
